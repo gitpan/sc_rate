@@ -1,0 +1,95 @@
+
+
+                   SC rate
+
+
+Version
+
+   1.1
+
+Introduction
+
+
+Example
+
+   sc_rate.pl test_sequence_align.msf   or
+
+   sc_rate.pl test_sequence_align.msf test_struct_align.saln
+
+
+Contact
+
+   jong@mrc-lmb.cam.ac.uk
+
+
+
+Warranty
+
+   I will do my best to fix.
+
+
+Copyright
+
+   GPL
+
+
+
+#________________________________________________________________________
+# Title     : sc_rate.pl  (or sc_rate in certain cases)
+# Usage     : sc_rate.pl test_file.msf [test_structure_file.jp]
+# Function  : Evaluates the quality of any sequence alignment.
+#             This caculates, basically, the Sequence identity(in %) divided
+#             by Composition identity rate of sequences with certain scanning
+#             window size of (8 ~ 24)
+# Example   : sc_rate.pl aa.msf aa.jp
+# Warning   : Takes 'ALIGNED' sequences. So, need at least a pair of seqs aligned.
+# Class     : Bio
+# Keywords  : SC rate, Sequence identity, composition identity
+# Options   : Following vars are read into the program at initialization by &parse_arguments
+#             subroutine, so please leave them. It is not just comments.
+#    $av_sc_segment     becomes    1  by  a  # To smooth the SC rates
+#                                  SC rates with Window size defined by a=X  .
+#    $make_gap_dot      becomes    d  by  d  # Modifies SC rate by a dynamic factor of window
+#    $av_sc_segment           =   [ ] by  a= # window size for averaging after getting SC rates
+#    $show_calculation  becomes    s  by  s  # Shows the scanning windows during calculation
+#    $no_stat           becomes    ns by  ns # do not show stat with 2 file inputs(
+#    $variable_win_size becomes    v  by  v  # This sets the scan win size dynamic
+#    $output_ordered    becomes    o  by  o  # in final printing, seq
+#    $interlaced_out    becomes    i  by  i  # in final printing, seq
+#    $normal_sc_rate    becomes    n  by  n  # Normalize (0-9) the SC rates
+#    $normal_er_rate    becomes    e  by  e  # Normalize (0-9) the error rates(2 file input)
+#    $conv_err_2_bin    becomes    c  by  c  # Converts error rates to 0 or 1 (occurred or not)
+#    $redu_window       becomes    r  by  r  # Tries to reduce the scan wind
+#                                            This is only activated with 'v' option.
+#    $apply_factor      becomes    f  by  f  # Modifies SC rate by a dynamic factor of window
+#                                            size. This is only activated with 'v' option
+#    $minus_whole_cs    becomes    m  by  m  # substracts rates with whole seq
+#                                            # this makes rates more strict in predicting
+#    $print_width_size  is        [ ] by  w= # the final output print block width
+#
+#    $ss_opt            becomes    ss by  ss, SS, -ss, -SS     #  for secondary structure only
+#    $H                 =         'H' by   -H or -h or H or h  # to retrieve only H segment
+#    $S                 becomes   'S' by   -S or  S            # to retrieve only S segment
+#    $E                 becomes   'E' by   -E or  E            # to retrieve only E segment
+#    $T                 becomes   'T' by   -T or -t or T or t  # to retrieve only T segment
+#    $I                 becomes   'I' by   -I or  I            # to retrieve only I segment
+#    $G                 becomes   'G' by   -G or -g or G or g  # to retrieve only G segment
+#    $B                 becomes   'B' by   -B or -b or B or b  # to retrieve only B segment
+#    $HELP              becomes    1  by   -help   # for showing help
+#    $simplify          becomes    1  by   -p or P or -P, p
+#    $simplify          becomes    1  by   -simplify or simplify, Simplify SIMPLIFY
+#    $comm_col          becomes   'C' by   -C or C or common
+#    $LIMIT             becomes    L  by   -L, L               # to limit the error rate to 9 .
+#    $HELP              becomes    1  by   -h, h, '?'          # for showing help
+# Package   :
+# Reference :
+# Returns   : No file writing.
+# Tips      : This is handy to see how reliable your alignment is.
+# Argument  : Upto 2 files and various options (in '-h'  or 'h' format )
+# Todo      :
+# Author    : A Biomatic
+# Version   : 1.1
+# Used in   : Bio
+# Enclosed  :
+#--------------------------------------------------------------------
+
