@@ -54,9 +54,8 @@
 # Argument  : Upto 2 files and various options (in '-h'  or 'h' format )
 # Todo      :
 # Author    : A Biomatic
-# Version   : 1.1
+# Version   : 1.2
 # Used in   : Bio
-# Enclosed  :
 #--------------------------------------------------------------------
 
 	#""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -232,7 +231,7 @@ sub scan_win_and_get_sc_rate_pairs{
 
   if(defined(${$_[2]})){ $base_l=${$_[2]}; }
   if(defined(${$_[3]})){ $scale =${$_[3]}; }
-  my(@sequences, @out_rate, $i, $j, $title, $window_1, $window_2,
+  my(@sequences, @out_rate, $title, $window_1, $window_2,
 	  $ratio_compos_vs_seqid, @array_of_2_seq,%out_hash );
   my(@keys)= sort keys %input;
   for ($i=0; $i<@keys; $i++){    # putting sequences from hash to an array
@@ -284,7 +283,7 @@ sub scan_win_and_get_sc_rate_pairs{
 sub get_windows_sc_rate_array{
   my($base_level)=1; my($scale)=1; my($window_size, $show_calculation, $redu_window,
 	 @input, @input0, @input1, $variable_win_size, $apply_factor,
-	 @ratio_array, @array_of_2_seq, $seq_id, $offset, $half_of_w_size, $t, $length, $w,
+	 @ratio_array, @array_of_2_seq, $seq_id, $offset, $half_of_w_size, $length,
 	 $compos_id, $seq_id, $window_2, $window_1, $compos_whole_seq, $seq_id_whole_seq,
 	 $ratio_whole_seq, $win_rate_div_by_whole_rate, $normalizing_factor, $lowest_rate,
 	 $winsize_reduc_factor, $largest_win_reached, $ori_win_size);
@@ -1036,7 +1035,7 @@ sub print_seq_in_columns{
 	    for($i=0; $i < @{"names$c"}; $i++){
 	        $names=${"names$c"}[$i];
 				$seq  =substr($hash{$names},$k,$bl);
-	        printf ("%-${n}s %-${bl}s  ", $names, $seq);
+	        printf ("\%\-$n\s \%\-$bl\s  ", $names, $seq);
 	    }
 	    print "\n" unless($n_space ==1);
 	  }
@@ -1057,7 +1056,7 @@ sub print_seq_in_columns{
 				 @keys = keys (%hash);
 				 $names= $keys[$i];
 				 $seq=substr($hash{$names}, $k, $bl);
-				 printf ("%-${n}s %-${bl}s${sp}", $names, $seq);
+				 printf ("\%\-$n\s \%\-$bl\s$sp", $names, $seq);
 			  }
 			  print "\n";
 	   }
@@ -1277,12 +1276,11 @@ sub get_position_shift_rate{
 # Author    : A Biomatic
 # Version   : 1.0
 # Used in   : get_position_shift_rate, previously get_each_posi_diff_hash
-# Enclosed  :
 #--------------------------------------------------------------------
 sub get_residue_error_rate{
    my(%diffs)= %{$_[0]}; my(@names)= keys (%diffs);
-   my($LIMIT)=${$_[1]} if ref($_[1]) eq 'SCALAR';
-   my($LIMIT)= $_[1] unless ref($_[1]);
+   $LIMIT=${$_[1]} if ref($_[1]) eq 'SCALAR';
+   $LIMIT= $_[1] unless ref($_[1]);
    my(%seqs_comp_in_pair, @temp, @temp2,$split_char, $i);
    for ($i=0; $i < @names; $i++){
 	  if($diffs{$names[$i]}=~/\,/){ $split_char =',';}else{ $split_char = ''; }
@@ -1315,43 +1313,33 @@ sub get_residue_error_rate{
 # Function  : tells the sequence sizes of given sequences
 # Example   :
 # Warning   :
-# Class     : Utility
 # Keywords  :
 # Options   :
-# Package   :
-# Reference : http://sonja.acad.cai.cam.ac.uk/bioperl.html
 # Returns   :
-# Tips      :
 # Argument  :
-# Todo      :
-# Author    : A Biomatic
 # Version   : 1.0
-# Used in   :
-# Enclosed  :
 #--------------------------------------------------------------------
 sub tell_seq_length{
-   ###########################################################################
-   my($i,$j,$k,$l,$m,$n,$o,$p,$q,$r,$s,$t,$u,$v,$w,$x,$y,$z,
-	 $dir, $file, $in_dir, $end_found, $entry, $entry_match,
-	 $gap_chr, $length, $line, $name, $name_found,
-	 $output, $out_string, $pre, $pwd, $string,
-	 @keys, @out_hash, @out_hash_final, @string, @temp,
-	 @whole_file, %correct, %Final_out, %hash, %input, %out_hash_final   );
-   ##########################################################################################
-	my(@A ) = &handle_arguments( @II ); my( $num_opt )=${$A[7]}; my( $char_opt )=${$A[8]};
-	my(@hash)  =@{$A[0]}; my(@file)   =@{$A[4]}; my(@dir   )  =@{$A[3]}; my(@array)=@{$A[1]};
-	my(@string)=@{$A[2]}; my(@num_opt)=@{$A[5]}; my(@char_opt)=@{$A[6]};
-   ##########################################################################################
-
+	#"""""""""""""""""< handle_arguments{ head Ver 4.1 >"""""""""""""""""""
+	my(@A)=&handle_arguments(@_);my($num_opt)=${$A[7]};my($char_opt)=${$A[8]};
+	my(@hash)=@{$A[0]};my(@file)=@{$A[4]};my(@dir)=@{$A[3]};my(@array)=@{$A[1]};
+	my(@string)=@{$A[2]};my(@num_opt)=@{$A[5]};my(@char_opt)=@{$A[6]};
+	my(@raw_string)=@{$A[9]};my(%vars)=%{$A[10]};my(@range)=@{$A[11]};
+	my($i,$j,$c,$d,$e,$f,$g,$h,$k,$l,$m,$n,$o,$p,$q,$r,$s,$t,$u,$v,$w,$x,$y,$z);
+	if($debug==1){print "\n\t\@hash=\"@hash\"
+	\@raw_string=\"@raw_string\"\n\t\@array=\"@array\"\n\t\@num_opt=\"@num_opt\"
+	\@char_opt=\"@char_opt\"\n\t\@file=\"@file\"\n\t\@string=\"@string\"\n" }
+	#""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+  my(@out_hash, %hash);
   for($i=0; $i < @hash; $i++){
-	%hash = %{$hash[$i]};
-	@keys = keys %hash;
-	for ($j=0; $j < @keys; $j ++){
-	  if($hash{$keys[$j]}=~/\,\S+\,/){ @string= split(/\,/, $hash{$keys[$j]});
-	  }else{ @string= split(//, $hash{$keys[$j]}); }
-	  $h -> {$keys[$j]} = @string;  ## $h is the ref. of the anonymous hash
-	}                               ## This is equivalent to "$h{$keys[$j]}= $length;"
-	push(@out_hash , $h ) ;
+	 %hash = %{$hash[$i]};
+	 @keys = keys %hash;
+	 for ($j=0; $j < @keys; $j ++){
+		if($hash{$keys[$j]}=~/\,\S+\,/){ @string= split(/\,/, $hash{$keys[$j]});
+		}else{ @string= split(//, $hash{$keys[$j]}); }
+		$h -> {$keys[$j]} = @string;  ## $h is the ref. of the anonymous hash
+	 }                               ## This is equivalent to "$h{$keys[$j]}= $length;"
+	 push(@out_hash , $h ) ;
   }
   if(@out_hash == 1){ $out_hash[0]; }
   elsif(@out_hash < 1){ die "\nSomething is wrong at tell_seq_length\n"; }
@@ -1740,8 +1728,10 @@ sub remove_dup_in_array{
   if(@out_ref ==1){ return($out_ref[0]);}
   elsif(@out_ref >1){  return(@out_ref);}
 }
+
+
 #________________________________________________________________________
-# Title     : default_help         (perl version var is $] )
+# Title     : default_help
 # Usage     : &default_help2;  usually with 'parse_arguments' sub.
 # Function  : Prints usage information and others when invoked. You need to have
 #             sections like this explanation box in your perl code. When invoked,
@@ -1755,76 +1745,75 @@ sub remove_dup_in_array{
 #             or its ref. If this defined, it will produce exit the program
 #             telling the minimum arguments.
 # Warning   : this uses format and references
-# Class     :
 # Keywords  :
 # Options   :
-# Package   : File_Util
-# Reference :
 # Returns   : formated information
-# Tips      : This usually goes with  parse_arguments.pl (= easy_opt.pl)
 # Argument  :
-# Todo      :
-# Author    :
-# Version   : 3
-# Used in   :
-# Enclosed  :
+# Version   : 3.3
 #--------------------------------------------------------------------
 sub default_help{
-  my($i, $perl_dir, $arg_num_limit, $pwd, $head ,$arg_num_limit );
-  my($logname)=getlogin(); my($pwd)=`pwd`; my($date)=`date`; chomp($date,$pwd);
+  my($i, $perl_dir, $arg_num_limit, $head ,$arg_num_limit,
+	  @entries, @entries_I_want_write );
+  my($logname)=getlogin();
+  my($pwd)=`pwd`;
+  my($date)=`date`;
+  chomp($date,$pwd);
   my($not_provided)="--- not provided ---\n";
   my($file_to_read) = $0;
 
   for($i=0; $i < @_; $i ++){
-	 if((ref($_[$i]) eq 'SCALAR')&&(${$_[$i]} =~ /^\d$/)){
-		$arg_num_limit = ${$_[$i]};  }
-	 elsif( (!(ref($_[$i]))) && ($_[$i] =~ /^\d$/)){
-		$arg_num_limit = $_[$i];     }
+	  if((ref($_[$i]) eq 'SCALAR')&&(${$_[$i]} =~ /^\d$/)){
+		  $arg_num_limit = ${$_[$i]};  }
+	  elsif( (!(ref($_[$i]))) && ($_[$i] =~ /^\d$/)){
+		  $arg_num_limit = $_[$i];     }
   }
-
-  %entries = %{&read_head_box_help(\$file_to_read )};
+  my %entries = %{&read_head_box(\$file_to_read )};
   if($option_tb_found ==1){
-	@option_tb=@{&read_option_table(\$file_to_read)};
+	 @option_tb=@{&read_option_table(\$file_to_read)};
   }
 
-  foreach $help_item (keys %entries)  ## substituing with 'Not provided' message when there is no info
-  {
-	 ${$help_item}= $not_provided if( (${$help_item}=~/^[\W]*$/)||( !defined(${$help_item})) );
+  @entries = keys %entries;
+  foreach $help_item (@entries){
+	  ${$help_item}= $not_provided if( ${$help_item}=~/^[\W]*$/  and  !defined(${$help_item}) );
   }
-  #########################################
+  #""""""""""""""""""""""""""""""""""""""""
   #########  Writing the format <<<<<<<<<<<
-  #########################################
+  #""""""""""""""""""""""""""""""""""""""""
   $~ =HEADER_HELP;
   write;   ## <<--  $~ is the selection operator
-  $~ =DEFAULT_HELP;
-  for(sort keys %entries){  write  }
-  print chr(7);  print "_"x88,"\n\n";
+  $~ =DEFAULT_HELP_FORM;
+
+  @entries_I_want_write=sort keys %entries;
+
+  for( @entries_I_want_write ){  write  }
+
+  print chr(7);  print "_"x72,"\n\n";
 
   if(@ARGV < $arg_num_limit){ print "\* $0 fataly needs $arg_num_limit arguments\n\n" }
 
   if(  $option_tb_found == 1){
-	#########  Printing the OPTION table contents <<<<<<<<<<<<
-	print "  Press \"Return\" key to see what options $logname\'s \n\n    \"$0\" take... \n";
-	   $key_press=getc();
-	print @option_tb, "\n"x2 if(@option_tb > 0);
+	 #########  Printing the OPTION table contents <<<<<<<<<<<<
+	 print "  Press \"Return\" key to see what options $logname\'s \n\n    \"$0\" take... \n";
+		 $key_press=getc();
+	 print @option_tb, "\n"x2 if(@option_tb > 0);
   }
 format HEADER_HELP  =
-_____________________________________________________________________________
-			  __  __      ______      __           _____
-			 /\ \/\ \    /\  ___\    /\ \         /\  _ `\
-			 \ \ \_\ \   \ \ \__/    \ \ \        \ \ \L\ \
-			  \ \  _  \   \ \  _\     \ \ \        \ \ ,__/
-			   \ \ \ \ \   \ \ \/___   \ \ \_____   \ \ \/
-				\ \_\ \_\   \ \_____\   \ \______\   \ \_\
-				 \/_/\/_/    \/_____/    \/______/    \/_/  V 3
-_______________________________________________________________________________
+_____________________________________________________________________
+		  __  __      ______     __          _____
+		 /\ \/\ \    /\  ___\   /\ \        /\  _ `\
+		 \ \ \_\ \   \ \ \__/   \ \ \       \ \ \L\ \
+		  \ \  _  \   \ \  _\    \ \ \       \ \ ,__/
+		   \ \ \ \ \   \ \ \/___  \ \ \_____  \ \ \/
+		    \ \_\ \_\   \ \_____\  \ \______\  \ \_\
+		     \/_/\/_/    \/_____/   \/______/   \/_/ V 3.1`
+_____________________________________________________________________
 .
-
-format DEFAULT_HELP =
+format DEFAULT_HELP_FORM =
  @<<<<<<<<<: @*
  $_        $entries{$_}
 .
 }
+
 
 #________________________________________________________________________
 # Title     : read_head_box_help
@@ -3734,101 +3723,96 @@ sub put_position_back_to_str_seq{
 
 
 #________________________________________________________________________
-# Title     : find_seq_files (similar to find.pl) used in 'read_any_seq_file.pl'
+# Title     : find_seq_files
 # Usage     : $found_file = ${&find_seq_files(\$input_file_name)};
-# Function  : seeks given test file in pwd, specified dir, default path etc.
+# Function  : (similar to find.pl) used in 'read_any_seq_file.pl'
+#             seeks given test file in pwd, specified dir, default path etc.
 #             If not found yet, it looks at all the subdirectories of path and pwd.
 #             PATH environment dirs, then returns full path file name.
 # Example   : $found_file=${&find_seq_files(\$input_file_name)};
 # Warning   :
-# Class     :
-# Keywords  :
+# Keywords  : find_anyj_seq_files, find any seq files, find seq files
 # Options   :
-# Package   :
-# Reference :
 # Returns   : return( \$final );
-# Tips      :
 # Argument  : (\$input_file_name) while $input_file_name can be  'xxx.xxx', or '/xxx/xxx/xxx/xxy.yyy'
 #             or just directory name like 'aat' for  /nfs/ind4/ccpe1/people/A Biomatic /jpo/align/aat
 #             then, it tries to find a file with stored seq file extensions like msf, jp, pir etc
 #             to make aat.msf, aat.jp, aat.pir ... and searches for these files.
-# Todo      :
-# Author    : A Biomatic
-# Version   :
-# Used in   :
-# Enclosed  :
+# Version   : 1.0
 #--------------------------------------------------------------------
 sub find_seq_files{
   my($final, $no_ext_file, $result); my($in_file)=${$_[0]}; my($pwd)=`pwd`; chomp($pwd);
   my( $base, @ENV_dir, $ext, @probable_dir_list, $directory);
   my(@extension_db)=('sst','msf','fasta','jp','fas','aln','brk','pdb', 'rms', 'ent','slx','fa');
-  my(@probable_dir_list)=('JPO','ALIGN','PATH','HOME','PIRDIR','PWD','PDBSST','PDBENT','BLASTDB','PIRDIR','SWDIR','PDB');
-   if(($in_file=~/\//)&&(-e $in_file)){ $final=$in_file; }
-   elsif((-e $in_file)&&(-s $in_file)&&($in_file !~/\//)){ $in_file="$pwd\/$in_file"; $final=$in_file;}
-   ######## if it was like  '/nfs/ind4/ccpe1/people/A Biomatic /perl.msf'
-   elsif($in_file =~ /\/([\w\-\.]+)$/){ $in_file = $1;
-		if(-e $in_file){ $final = "$pwd\/$in_file"; }
-	#### if it has xxxxxx.xxxx  file form. #######
-	elsif($in_file =~ /(([\w\-]+)\.([\w\-]+))$/){ $file=$1; $base=$2; $ext=$3;
-	    for (@extension_db){ if($_ eq $ext){ shift(@extension_db);}}
-	    unshift(@extension_db, $ext);
-	    for (@probable_dir_list){ if($ENV{$_}=~ /\/$/){chop($ENV{$_});}
-	       push( @ENV_dir, split(/:/, $ENV{$_}));}
-	       for $dir (@ENV_dir){ $in_file="$dir\/$file";
-		  if ((-e $in_file) && (-s $in_file)){  $final=$in_file; last;}
-		  else{
-		      for $ext (@extension_db){ $in_file="$dir\/$base\.$ext";
-			  if ((-e $in_file) && (-s $in_file)){
-			     if ($file =~  /$in_file/){ $final = $in_file; last;}}}}}
-	       unless(defined ($final)){
-		  for $dir (@ENV_dir){ $in_file= ${&search_files_in_subdir(\$dir, \$file)};
-		      if(-e $in_file){ $final=$in_file; last; }}}}
+  @probable_dir_list=('JPO','ALIGN','PATH','HOME','PIRDIR','PWD','PDBSST','PDBENT','BLASTDB','PIRDIR','SWDIR','PDB');
+	if(($in_file=~/\//)&&(-e $in_file)){ $final=$in_file; }
+	elsif((-e $in_file)&&(-s $in_file)&&($in_file !~/\//)){ $in_file="$pwd\/$in_file"; $final=$in_file;}
+	######## if it was like  '/nfs/ind4/ccpe1/people/A Biomatic /perl.msf'
+	elsif($in_file =~ /\/([\w\-\.]+)$/){ $in_file = $1;
+		  if(-e $in_file){ $final = "$pwd\/$in_file"; }
+		  #### if it has xxxxxx.xxxx  file form. #######
+		  elsif($in_file =~ /(([\w\-]+)\.([\w\-]+))$/){ $file=$1; $base=$2; $ext=$3;
+				for (@extension_db){ if($_ eq $ext){ shift(@extension_db);}}
+				unshift(@extension_db, $ext);
+				for (@probable_dir_list){ if($ENV{$_}=~ /\/$/){chop($ENV{$_});}
+					push( @ENV_dir, split(/:/, $ENV{$_}));}
+					for $dir (@ENV_dir){ $in_file="$dir\/$file";
+						if ((-e $in_file) && (-s $in_file)){  $final=$in_file; last;}
+						else{
+							 for $ext (@extension_db){ $in_file="$dir\/$base\.$ext";
+								  if ((-e $in_file) && (-s $in_file)){
+									  if ($file =~  /$in_file/){ $final = $in_file; last;}}}}}
+					unless(defined ($final)){
+						for $dir (@ENV_dir){ $in_file= ${&search_files_in_subdir(\$dir, \$file)};
+							 if(-e $in_file){ $final=$in_file; last; }}}}
 
-	 ### if it has  xxxxxx   file form, ie. not extension #######
-	 elsif($in_file =~/\/([\w_\-]+)$/){  $base = $1;
-	   for (@extension_db){
-	     if($_ eq $ext){ shift(@extension_db);  }
-	     unshift(@extension_db, $ext);
-	     for (@probable_dir_list){
-	       if ($ENV{$_} =~ /\/$/){  chop($ENV{$_}); }
-	       push( @ENV_dir, split(/:/, $ENV{$_}) );
-	       for $dir (@ENV_dir){ $no_ext_file="$dir\/$base";
-		   if((-e $no_ext_file) && (-s $no_ext_file)){ $final=$no_ext_file; last;}
-		   else{
-		     for $ext (@extension_db){ $in_file ="$dir\/$base\.$ext";
-		        if ((-e $in_file) && (-s $in_file)){ $final = $in_file; last;}}}}}}}}
+			### if it has  xxxxxx   file form, ie. not extension #######
+			elsif($in_file =~/\/([\w_\-]+)$/){  $base = $1;
+			  for (@extension_db){
+				 if($_ eq $ext){ shift(@extension_db);  }
+				 unshift(@extension_db, $ext);
+				 for (@probable_dir_list){
+					if ($ENV{$_} =~ /\/$/){  chop($ENV{$_}); }
+					push( @ENV_dir, split(/:/, $ENV{$_}) );
+					for $dir (@ENV_dir){ $no_ext_file="$dir\/$base";
+						 if((-e $no_ext_file) && (-s $no_ext_file)){ $final=$no_ext_file; last;}
+						 else{
+							for $ext (@extension_db){ $in_file ="$dir\/$base\.$ext";
+								if ((-e $in_file) && (-s $in_file)){ $final = $in_file; last;}}}}}}}}
 
-	#### when the input was like this  'perl.msf'  in any directory.
-	elsif($in_file =~ /^(([\w\-]+)\.([\w\-]+))$/){ $file=$1; $base=$2; $ext=$3;
-	for (@extension_db){ if($_ eq $ext){ shift(@extension_db);}}
-	unshift(@extension_db, $ext);
-	for (@probable_dir_list){ if($ENV{$_}=~ /\/$/){chop($ENV{$_});}
-	   push( @ENV_dir, split(/:/, $ENV{$_}));}
-	   for $dir (@ENV_dir){ $in_file="$dir\/$file";
-	      if ((-e $in_file) && (-s $in_file)){ $final=$in_file; last;}
-	      else{
-		  for $ext (@extension_db){ $in_file="$dir\/$base\.$ext";
-		      if ((-e $in_file) && (-s $in_file)){
-		         if ($file =~  /$in_file/){ $final = $in_file; last;}}}}}
-	   unless(defined ($final)){
-	      for $dir (@ENV_dir){ $in_file= ${&search_files_in_subdir(\$dir, \$file)};
-		  if(-e $in_file){ $final=$in_file; last; }}}}
-	#### when the input was like this  'hemocyan'  in any directory.
-	elsif($in_file =~ /^([\w\-]+)$/){ $file=$1;
-	for (@probable_dir_list){ if($ENV{$_}=~ /\/$/){chop($ENV{$_});}
-	   push( @ENV_dir, split(/:/, $ENV{$_}));}
-	   for $dir (@ENV_dir){ $in_file="$dir\/$file";
-	      if ((-e $in_file) && (-T $in_file)){  $final=$in_file; last;}
-	      else{
-		  for $ext (@extension_db){ $in_file="$dir\/$file\.$ext";
-		      if ((-e $in_file) && (-s $in_file)){
-		         if ($file =~  /$in_file/){ $final = $in_file; last;}}}}}
-	   unless(defined ($final)){
-	      for $dir (@ENV_dir){ $in_file= ${&search_files_in_subdir(\$dir, \$file)};
-		  if(-e $in_file){ $final=$in_file; last; }}}}
-   END_POINT:
-   return( \$final );
+	 #### when the input was like this  'perl.msf'  in any directory.
+	 elsif($in_file =~ /^(([\w\-]+)\.([\w\-]+))$/){ $file=$1; $base=$2; $ext=$3;
+		  for (@extension_db){ if($_ eq $ext){ shift(@extension_db);}}
+		  unshift(@extension_db, $ext);
+		  for (@probable_dir_list){ if($ENV{$_}=~ /\/$/){chop($ENV{$_});}
+			  push( @ENV_dir, split(/:/, $ENV{$_}));}
+			  for $dir (@ENV_dir){ $in_file="$dir\/$file";
+				  if ((-e $in_file) && (-s $in_file)){ $final=$in_file; last;}
+				  else{
+						for $ext (@extension_db){ $in_file="$dir\/$base\.$ext";
+							 if ((-e $in_file) && (-s $in_file)){
+								 if ($file =~  /$in_file/){ $final = $in_file; last;}}}}}
+			  unless(defined ($final)){
+				  for $dir (@ENV_dir){ $in_file= ${&search_files_in_subdir(\$dir, \$file)};
+						if(-e $in_file){ $final=$in_file; last; }}}}
+	 #### when the input was like this  'hemocyan'  in any directory.
+	 elsif($in_file =~ /^([\w\-]+)$/){ $file=$1;
+		  for (@probable_dir_list){ if($ENV{$_}=~ /\/$/){chop($ENV{$_});}
+			  push( @ENV_dir, split(/:/, $ENV{$_}));}
+			  for $dir (@ENV_dir){ $in_file="$dir\/$file";
+				  if ((-e $in_file) && (-T $in_file)){  $final=$in_file; last;}
+				  else{
+						for $ext (@extension_db){ $in_file="$dir\/$file\.$ext";
+							 if ((-e $in_file) && (-s $in_file)){
+								 if ($file =~  /$in_file/){ $final = $in_file; last;}}}}}
+			  unless(defined ($final)){
+				  for $dir (@ENV_dir){ $in_file= ${&search_files_in_subdir(\$dir, \$file)};
+						if(-e $in_file){ $final=$in_file; last; }}}}
+	END_POINT:
+	return( \$final );
 }
+
+
 #________________________________________________________________________
 # Title     : read_any_seq_files  (can handle multiple input)
 # Usage     : %out_seq=%{&read_any_seq_file(\$input_file_name)};
@@ -4074,129 +4058,234 @@ sub sum_array{		# usage:  $output = &sum_array(\@any_array);
 	\$sum;
 }
 
-#________________________________________________________________________
+#________________________________________________________________________________________
 # Title     : print_seq_in_block
 # Usage     : &print_seq_in_block (\$block_leng, 'i',\%h1, 'sort', \%h2, \%hash3,,,);
 # Function  : gets many refs  for one scalar  or hashes and prints
 #               the contents in lines of \$block_leng(the only scalar ref. given) char.
-# Example   : If there are 3 hashes; (in the order of \%hash3, \%hash2, \%hash1)
-#             >> 1st Hash        >> 2nd Hash         >> 3rd Hash          Output >>>
-#             Name1  THIS-IS-    Name123  eHHHHHHH   Name123  12222223    Name123  12222223
-#                                                              Name123  eHHHHHHH
-#             options should be single chars                              Name1    THIS-IS-
-# Warning   :
-# Class     :
-# Keywords  :
-# Options   : 'o' or 'O' => ordered hash print, 'n' or'N' => no space between blocks.
-#             's' or 'S' => printout sorted by seq names.(all options can be like \$sort
+# Options   : 'o' or 'O' => ordered hash print,
+#             'n' or'N' => no space between blocks.
+#             's' or 'S' => printout sorted by seq names.
+#             'i' or 'I' => interlaced print.(this requires identical names in hashes)
+#             'v' or 'V' => show sequence start number at each line
+#             'g' or 'G' => with gap chars between  aa residues
+#              l= for block length. Default is 60 char
+#              t= for specifying the length of seq names shown
+#              t  for truncating seq names shwn to 12 chars.
+#              f= for file output  eg. f=XXXXXX.issa
+#              r=digit-digit  (eg. 10-70) to take only the defined region of sequences
+#            digit-digit  (eg. 10-70) to take only the defined region of sequences
+#
+#            just digit  for block length
+#
+#             (all options can be like \$sort
 #             while $sort has 's' as value. naked number like 100 will be the
 #             block_length. 'i' or 'I' => interlaced print.(this requires
 #             identical names in hashes)
-#             Example of ( no option, DEFAULT )        # Example of ( 'i' or 'I' option, INTERLACE )
-#             6taa           ------ATPADWRSQSIY      #   6taa           ------ATPADWRSQSIY
-#             2aaa           ------LSAASWRTQSIY      #   6taa           ------CCHHHHCCCCEE
-#             1cdg           APDTSVSNKQNFSTDVIY      #   6taa           ------563640130000
-#                                           #
-#             6taa           ------CCHHHHCCCCEE      #   2aaa           ------LSAASWRTQSIY
-#             2aaa           ------CCHHHHCCCCEE      #   2aaa           ------CCHHHHCCCCEE
-#             1cdg           CCCCCCCCCCCCCCCCEE      #   2aaa           ------271760131000
-#                                           #
-#             6taa           ------563640130000      #   1cdg           APDTSVSNKQNFSTDVIY
-#             2aaa           ------271760131000      #   1cdg           CCCCCCCCCCCCCCCCEE
-#             1cdg           675232723600000000      #   1cdg           675232723600000000
-#                                           #
-#             Example of ('s' or 'S' option, SORT )    # Example of ('o' or 'O' option, ORDERED by input hashes
-#             1cdg           APDTSVSNKQNFSTDVIY      #   6taa           ------ATPADWRSQSIY
-#             2aaa           ------LSAASWRTQSIY      #   2aaa           ------LSAASWRTQSIY
-#             6taa           ------ATPADWRSQSIY      #   1cdg           APDTSVSNKQNFSTDVIY
-#                                           #
-#             1cdg           CCCCCCCCCCCCCCCCEE      #   6taa           ------CCHHHHCCCCEE
-#             2aaa           ------CCHHHHCCCCEE      #   2aaa           ------CCHHHHCCCCEE
-#             6taa           ------CCHHHHCCCCEE      #   1cdg           CCCCCCCCCCCCCCCCEE
-#                                           #
-#             1cdg           675232723600000000      #   6taa           ------563640130000
-#             2aaa           ------271760131000      #   2aaa           ------271760131000
-#             6taa           ------563640130000      #   1cdg           675232723600000000
-# Package   :
-# Reference :
-# Returns   :
-# Tips      :
+# Warning   :
+# Keywords  : print_sequence_in_block print_alignment_in_block
+# Example   : If there are 3 hashes output will be; (in the order of \%hash3, \%hash2, \%hash1)
+#             >> 1st Hash        >> 2nd Hash         >> 3rd Hash
+#             Name1  THIS-IS-    Name123  eHHHHHHH   Name123  12222223
+#
+#             You will get;
+#                            Name1    THIS-IS-
+#                            Name123  eHHHHHHH
+#                            Name123  12222223
+#
 # Argument  : many refs  for hash (one for bottm, one for top, etc,top hash is usually
 #               to denote certain caculations or results of the bottom one
-# Todo      :
-# Author    : A Biomatic
-# Version   :
-# Used in   :
-# Enclosed  :
-#--------------------------------------------------------------------
-sub print_seq_in_block{ my($k,$c,$i,$s,$t,@in,$intl,$z,$diff,$offset); my($bl)=60;
-  $sort =0; $n_space =0; $ordered =0; $gap_char='-'; my($na,$larg,$names,$seq); my($n)=13;
-  undef(@in);  sub numerically{ $a <=> $b; } my(@in_ar, $bl_passed);
+# Version   : 1.4
+#             Example of ( no option, DEFAULT )  # Example of ('i' or 'I' option,
+#                                                                INTERLACE )
+#             6taa           ----ATPADWRSQSIY    #   6taa       ------ATPADWRSQSIY
+#             2aaa           ------LSAASWRTQS    #   6taa       ------CCHHHHCCCCEE
+#             1cdg           APDTSVSNKQNFSTDV    #   6taa       ------563640130000
+#
+#             6taa           ------CCHHHHCCCC    #   2aaa       ------LSAASWRTQSIY
+#             2aaa           ------CCHHHHCCCC    #   2aaa       ------CCHHHHCCCCEE
+#             1cdg           CCCCCCCCCCCCCCCC    #   2aaa       ------271760131000
+#
+#             6taa           ------5636401300    #   1cdg       APDTSVSNKQNFSTDVIY
+#             2aaa           ------2717601310    #   1cdg       CCCCCCCCCCCCCCCCEE
+#             1cdg           6752327236000000    #   1cdg       675232723600000000
+#
+#             Example of('s' or 'S' option,SORT) # Example of ('o' or 'O' option,
+#                                                        ORDERED by input hashes )
+#             1cdg           APDTSVSNKQNFSTDV    #   6taa       ------ATPADWRSQSIY
+#             2aaa           ------LSAASWRTQS    #   2aaa       ------LSAASWRTQSIY
+#             6taa           ------ATPADWRSQS    #   1cdg       APDTSVSNKQNFSTDVIY
+#
+#             1cdg           CCCCCCCCCCCCCCCC    #   6taa       ------CCHHHHCCCCEE
+#             2aaa           ------CCHHHHCCCC    #   2aaa       ------CCHHHHCCCCEE
+#             6taa           ------CCHHHHCCCC    #   1cdg       CCCCCCCCCCCCCCCCEE
+#
+#             1cdg           6752327236000000    #   6taa       ------563640130000
+#             2aaa           ------2717601310    #   2aaa       ------271760131000
+#             6taa           ------5636401300    #   1cdg       675232723600000000
+#-----------------------------------------------------------------------------------
+sub print_seq_in_block{
+  my($c, $d, $e, $f, $k, $i, $s, $t,@in,$gapped,
+	  %input0,%input1,%input2,%input3,%input4, @names0, @names1, @names2, @names3,
+	  $intl,$z,$diff,$offset, $truncate_name_to_10_char, $trunc_name_to, $block_range,
+	  $write_out_file);
+  my($bl)=60;
+  my($sort) =0; my($n_space)=0; my($ordered) =0; my($gap_char) ='-';
+  my($na,$larg,$names,$seq, $visual_num); my($n)=13;
+  my(@in_ar, $bl_passed);
 
+  ###############  ARGV handling ######################
   for($k=0; $k< @_ ;$k++){
-	 if( !ref($_[$k]) ){    # when inputs are not ref.
-		if($_[$k]=~ /^[\-]*([\d]{1,4})$/){ $bl=$1 if $1>0; $bl_passed=1 if $1>0; next;}  #<--   option handling
-		if($_[$k]=~ /^[\-sS]$/){ $sort = 1; next;}
-		if($_[$k]=~ /^[\-nN]$/){ $n_space = 1;next;}
-		if($_[$k]=~ /^[\-iI]$/){ $intl = 1; next;}
-		elsif($_[$k]=~ /^[\-oO]$/){ $ordered = 1;}
-	 }
-	 elsif( ref($_[$k]) eq "SCALAR" ){     #<--   option handling
-		if(${$_[$k]}=~ /^[\-]*([\d]{1,4})$/){$bl=$1 if $1>0; $bl_passed=1 if $1>0; next;}      # the scalar input
-		if(${$_[$k]}=~ /^[\-sS]$/){$sort = 1;next;}                 # should shorter than 5
-		if(${$_[$k]}=~ /^[\-nN]$/){$n_space = 1;next;}              # to be recognized as
-		if(${$_[$k]}=~ /^[\-iI]$/){$intl = 1;next;}                 # options, be it number or
-		elsif(${$_[$k]}=~ /^[oO]$/){$ordered = 1;}                  # or chars.
-	 }
-	 elsif(ref($_[$k]) eq "HASH") { push(@in,  $_[$k]); } #<-- seqn handling hash
-	 elsif(ref($_[$k]) eq "ARRAY"){ push(@in, &convert_arr_and_str_2_hash($_[$k], $k));} #<-- conv array to hash.
-	 elsif(ref($_[$k]) eq "SCALAR"){ push(@in,&convert_arr_and_str_2_hash($_[$k], $k));} #<-- conv array to hash.
-  }
-  #########  HASH input handling ############
-  for($k=0; $k<@in; $k++){
-	   if(ref($in[$k]) eq "HASH"){ %{"input$k"}=%{$in[$k]};
-	   if($sort == 1){
-		  $keys_long=join("", keys(%{"input$k"}) );
-	  if ($keys_long =~ /[\d\.]+/){
-	     @{"names$k"}= sort numerically keys(%{"input$k"}); }   # numerical sort
-	  elsif($keys_long =~ /[\w\.\,]+/){
-	     @{"names$k"}= sort keys(%{"input$k"}); 	  } }       # normal sort
-	  else{ @{"names$k"}= keys(%{"input$k"}); }
-	   for($i=0; $i< @{"names$k"}; $i++){
-		  if(${"input$k"}{${"names$k"}[$i]} =~ /\,/){               # remove ','
-	     ${"input$k"}{${"names$k"}[$i]}=~ s/\,//g;}
+	  if( !ref($_[$k]) ){    # when inputs are not ref.
+		  if($_[$k]=~ /^[\-]*([\d]{1,4})$/){ $bl=$1 if $1>0; $bl_passed=1 if $1>0; next;}  #<--   option handling
+		  if($_[$k]=~ /^[\-sS]$/)   { $sort =    1; next;}
+		  if($_[$k]=~ /^[\-nN]$/)   { $n_space = 1; next;}
+		  if($_[$k]=~ /^[\-iI]$/)   { $intl =    1; next;}
+		  if($_[$k]=~ /^[\-]*[g]+/i){ $gapped   =  1; next;}
+		  if($_[$k]=~ /^[\-]*[v]+/i){ $visual_num =  1; next;}
+		  if($_[$k]=~ /^[\-]*l *= *(\d+)/i){ $bl =  $1; next;}
+		  if($_[$k]=~ /[r=]?(\d+\-\d+)$/i){ $block_range = $1; next;}                 # options, be it number or
+		  if($_[$k]=~ /^[\-]*t=(\d+)/i){ $trunc_name_to = $1; next;}                 # options, be it number or
+		  if($_[$k]=~ /^[\-]*[t]/i) { $truncate_name_to_10_char = 1; next;}                 # options, be it number or
+		  if($_[$k]=~ /f=(\S+)/i) {  $write_out_file = $1; next;}                 # options, be it number or
+		  elsif($_[$k]=~ /^[\-oO]$/){ $ordered = 1;      }
 	  }
-	   }
+	  elsif( ref($_[$k]) eq "SCALAR" ){     #<--   option handling
+		  if(${$_[$k]}=~ /^[\-]*([\d]{1,4})$/){$bl=$1 if $1>0; $bl_passed=1 if $1>0; next;}      # the scalar input
+		  if(${$_[$k]}=~ /^[\-sS]$/){$sort = 1;next;}                 # should shorter than 5
+		  if(${$_[$k]}=~ /^[\-nN]$/){$n_space = 1;next;}              # to be recognized as
+		  if(${$_[$k]}=~ /^[\-iI]$/){$intl = 1;next;}                 # options, be it number or
+		  if(${$_[$k]}=~ /^[\-]*[g]/i){ $gapped =   1; next;}                 # options, be it number or
+		  if(${$_[$k]}=~ /^[\-]*[v]/i){ $visual_num = 1; next;}                 # options, be it number or
+		  if(${$_[$k]}=~ /^[\-]*l *= *(\d+)/i){ $bl =  $1; next;}
+		  if(${$_[$k]}=~ /[r=]?(\d+\-\d+)$/i){ $block_range = $1; next;}                 # options, be it number or
+		  if(${$_[$k]}=~ /^[\-]*t=(\d+)/i){ $trunc_name_to = $1; next;}                 # options, be it number or
+		  if(${$_[$k]}=~ /^[\-]*[t]$/i){ $truncate_name_to_10_char = 1; next;}                 # options, be it number or
+		  if(${$_[$k]}=~ /f=(\S+)/i) {  $write_out_file = $1; next;}                 # options, be it number or
+		  elsif(${$_[$k]}=~ /^[o]$/i){$ordered = 1;}                  # or chars.
+	  }
+	  elsif(ref($_[$k]) eq "HASH") {  push(@in,  $_[$k]); } #<-- seqn handling hash
+	  elsif(ref($_[$k]) eq "ARRAY"){  push(@in, &convert_arr_and_str_2_hash($_[$k], $k));} #<-- conv array to hash.
+	  elsif(ref($_[$k]) eq "SCALAR"){ push(@in,&convert_arr_and_str_2_hash($_[$k], $k));} #<-- conv array to hash.
   }
 
-  for($z=0; $z < @in; $z++){
-	for($t=0;$t<@{"names$z"};$t++){ $na=${"names$z"}[$t];$s=${"input$z"}{$na};
-	   $larg=length($s) if length($s)> $larg;
-	   $n=length($na) if length($na) > $n;
-	   if($s =~ /\-/){ $gap_char='-'; }elsif( $s =~ /\./){  $gap_char='.';  }
-	   if (length($s)<$larg){$offset=length($s);$diff=$larg-$offset; substr($s,$offset,$larg)="$gap_char"x$diff;}}}
-  if($ordered== 1){  $bl=$larg if (($larg < 60)&&($bl_passed != 1));
-	  for($c=0; $c < @in; $c++){
-		 for($k=0; $k < $larg; $k+=$bl){
-	    for($i=0; $i <=$#{"names$c"}; $i++){
-	      $names= ${"names$c"}[$i];
-	      $seq= substr( ${"input$c"}{$names},  $k,  $bl);
-	      printf ("%-$n s  %-$bl s\n", $names,$seq);
-	    }
-	    print "\n" unless($n_space ==1);
-	 }print "\n";
-	  }
+  if($write_out_file){ open(FILE_OUT, ">$write_out_file"); print FILE_OUT "\n# Created by print_seq_in_block sub in $0\n\n"; }
+
+  #########  HASH input handling ############
+  for($k=0; $k< @in; $k++){
+		 if(ref($in[$k]) eq "HASH"){  %{"input$k"}=%{$in[$k]};    print %input0;
+			  if($sort == 1){   ## When the keys should be sorted.
+				  $keys_long= join("", keys(%{"input$k"}) );   ## makes a string of keys to do the next
+				  if ($keys_long =~ /[\d\.]+/){                ## see if there is digit.
+					  @{"names$k"}= sort {$a<=>$b} keys(%{"input$k"}); # numerical sort of keys(seq names)
+				  }elsif($keys_long =~ /[\w\.\,]+/){          ## if there is no digits,
+					  @{"names$k"}= sort keys(%{"input$k"});  ## do the normal string sort
+				  }
+			  }elsif($sort != 1){  @{"names$k"}= keys(%{"input$k"});   }
+
+			  if($gapped != 1){
+				  for($i=0; $i< @{"names$k"}; $i++){
+					 if(${"input$k"}{${"names$k"}[$i]} =~ /\,/){ ${"input$k"}{${"names$k"}[$i]}=~ s/\,//g;  }
+				  }
+			  }
+		 }
   }
-  elsif($intl==1){   $bl=$larg  if (($larg < 50)&&($bl_passed != 1));
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
+  #     Following is to make ends of sequences neat and crop seq defined by $block_range, (eg. 10-70)
+  #__________________________________________________________________________________________________
+  for($z=0; $z < @in; $z++){
+	  for($t=0;$t < @{"names$z"}; $t ++ ){
+		  $na=${"names$z"}[$t];
+		  if($block_range=~/(\d+)\-(\d+)/){  $start=$1; $length=$2-$1;
+			   if($length < 0){   print "# $na \t \$block_range: $block_range, WRONG !, $2 is less than $1 !!!\n", chr(7); }
+			   ${"input$z"}{$na}=substr(${"input$z"}{$na}, $start, $length);      }
+		  $s=${"input$z"}{$na};
+		  $larg=length($s) if length($s)> $larg;
+		  $n=length($na) if length($na) > $n;
+		  if($s =~ /\-/){ $gap_char='-'; }elsif( $s =~ /\./){  $gap_char='.';  }
+		  if (length($s)<$larg){   $offset=length($s);
+			 $diff=$larg-$offset;  substr($s,$offset,$larg)="$gap_char"x$diff;
+		  }
+	  }
+  } print "\n";
+
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  #     Following is the core code for making block printing
+  #_______________________________________________________________________
+  if($ordered== 1){
+		$bl=$larg if (($larg < 60)&&($bl_passed != 1));
+		for($c=0; $c < @in; $c++){
+			for($k=0; $k < $larg; $k += $bl){
+				for($i=0; $i < @{"names$c"}; $i++){		 $names= ${"names$c"}[$i];
+					 $seq= substr( ${"input$c"}{$names},  $k,  $bl);
+					 $seq=join(" ", split(/\,/, $seq)) if $gapped == 1;
+					 if($visual_num==1){
+                          printf ("\%\-$n\s %4d \%\-$bl\s\n", $names, ($k+1), $seq);
+						  printf FILE_OUT ("\%\-$n\s %4d \%\-$bl\s\n", $names, ($k+1), $seq) if $write_out_file;
+					 }else{
+					      printf ("\%\-$n\s \%\-$bl\s\n", $names, $seq);
+						  printf FILE_OUT ("\%\-$n\s \%\-$bl\s\n", $names, $seq) if $write_out_file;
+					 }
+				}print "\n" unless($n_space == 1);
+			}print "\n";
+		}
+  }elsif($intl==1){   ## When Interlace option is set
+		  $bl=$larg  if (($larg < 50)&&($bl_passed != 1));
+		  for($k=0; $k < $larg; $k+=$bl){
+			 for($i=0; $i < @{"names0"}; $i++){
+				for($c=0; $c <= $#in; $c++){	 $names=${"names$c"}[$i];
+					 $seq=substr(${"input$c"}{$names}, $k, $bl);
+					 $seq=join(" ", split(/\,/, $seq)) if $gapped == 1;
+					 if($visual_num==1){ printf ("\%\-$n\s %4d \%\-$bl\s\n", $names, ($k+1), $seq);
+						                 printf FILE_OUT ("\%\-$n\s %4d \%\-$bl\s\n", $names, ($k+1), $seq) if $write_out_file;
+					 }else{	 printf ("\%\-$n\s \%\-$bl\s\n", $names, $seq);
+						     printf  FILE_OUT ("\%\-$n\s \%\-$bl\s\n", $names, $seq) if $write_out_file;
+					 }
+				}print "\n" unless($n_space ==1);
+			 }print "\n";
+		  }print "\n" unless($n_space ==1);
+  }else{
+		#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#           This is the default
+		#___________________________________________________________
 		for($k=0; $k < $larg; $k+=$bl){
-		  for($i=0; $i < @{"names0"}; $i++){
-			for($c=0; $c <= $#in; $c++){ $names=${"names$c"}[$i]; $seq=substr(${"input$c"}{$names}, $k, $bl);
-	       printf ("%-$n s  %-$bl s\n", $names,$seq); } print "\n" unless($n_space ==1);} print "\n";} print "\n" unless($n_space ==1);}
-  else{ for($k=0; $k < $larg; $k+=$bl){   $bl=$larg if (($larg < 50)&&($bl_passed != 1));
-		  for($c=0; $c < @in; $c++){  # $n is the name space size
-	    for($i=0; $i < @{"names$c"}; $i++){ $names=${"names$c"}[$i]; $seq=substr(${"input$c"}{$names},$k,$bl);
-	    printf ("%-$n s  %-$bl s\n", $names,$seq);} print "\n" unless($n_space ==1);}print "\n";}}
+			$bl=$larg if (($larg < 50) and ($bl_passed != 1));
+			for($c=0; $c < @in; $c++){  # $n is the name space size
+				my(@seq_names) = @{"names$c"};
+				for($i=0; $i < @seq_names; $i++){
+					 my($names)=$seq_names[$i];
+					 my($long_seq)=${"input$c"}{$names};
+					 my($seq)=substr($long_seq, $k, $bl);
+					 $seq=join(" ", split(/\,/, $seq)) if $gapped == 1;
+					 if($visual_num==1){
+					     if($trunc_name_to=~/(\d+)/){   $n=$1; $truncate_name_to_10_char=0;
+					         $names=substr($names, 0, $n);
+							 printf ("\%\-$n\s %4d \%\-$bl\s\n", $names, ($k+1), $seq);
+							 printf FILE_OUT ("\%\-$n\s %4d \%\-$bl\s\n", $names, ($k+1), $seq) if $write_out_file;
+						 }elsif($truncate_name_to_10_char){	 $names=substr($names, 0, 12);
+							 printf ("%-12s  %4d \%\-$bl\s\n", $names, ($k+1), $seq);
+							 printf  FILE_OUT ("%-12s  %4d \%\-$bl\s\n", $names, ($k+1), $seq) if $write_out_file;
+					     }else{	 printf ("\%\-$n\s %4d %-\$bl\s\n", $names, ($k+1), $seq);
+							     printf FILE_OUT ("\%\-$n\s %4d \%\-$bl\s\n", $names, ($k+1), $seq) if $write_out_file;
+						 }
+					 }else{
+					     if($trunc_name_to=~/(\d+)/){   $n=$1; $truncate_name_to_10_char=0;
+							 $names=substr($names, 0, $n);
+							 printf ("\%\-$n\s \%\-$bl\s\n", $names, $seq);
+							 printf FILE_OUT ("\%\-$n\s \%\-$bl\s\n", $names, $seq) if $write_out_file;
+						 }elsif($truncate_name_to_10_char){	 $names=substr($names, 0,12);
+							 printf ("%-12s  \%\-$bl\s\n", $names, $seq);
+							 printf FILE_OUT ("%-12s  \%\-$bl\s\n", $names, $seq) if $write_out_file;
+					     }else{	 printf ("\%\-$n\s \%\-$bl\s\n", $names, $seq);
+							     printf  FILE_OUT ("\%\-$n\s \%\-$b\s\n", $names, $seq) if $write_out_file;
+					     }
+				     }
+				}print "\n" unless($n_space ==1);
+			}print "\n";
+		}
+	}
 }
+
 
 #________________________________________________________________________
 # Title     : cls
